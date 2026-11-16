@@ -21,6 +21,9 @@ import com.alibaba.datax.core.statistics.communication.CommunicationTool;
 import com.alibaba.datax.core.statistics.container.communicator.AbstractContainerCommunicator;
 import com.alibaba.datax.core.statistics.container.communicator.job.StandAloneJobContainerCommunicator;
 import com.alibaba.datax.core.statistics.plugin.DefaultJobPluginCollector;
+import com.alibaba.datax.core.statistics.plugin.task.FileSinkPluginCollector;
+import com.alibaba.datax.core.statistics.plugin.task.sink.DirtyRecordSinkManager;
+import com.alibaba.datax.core.statistics.plugin.task.sink.DirtySinkContext;
 import com.alibaba.datax.core.util.ErrorRecordChecker;
 import com.alibaba.datax.core.util.FrameworkErrorCode;
 import com.alibaba.datax.core.util.container.ClassLoaderSwapper;
@@ -98,6 +101,7 @@ public class JobContainer extends AbstractContainer {
 
         boolean hasException = false;
         boolean isDryRun = false;
+        DirtyRecordSinkManager dirtySinkManager = null;
         try {
             this.startTimeStamp = System.currentTimeMillis();
             isDryRun = configuration.getBool(CoreConstant.DATAX_JOB_SETTING_DRYRUN, false);
@@ -106,11 +110,26 @@ public class JobContainer extends AbstractContainer {
                 this.preCheck();
             } else {
                 userConf = configuration.clone();
+
                 LOG.debug("jobContainer starts to do preHandle ...");
                 this.preHandle();
 
                 LOG.debug("jobContainer starts to do init ...");
                 this.init();
+
+                // 启用脏数据落盘：注册全局管理器，并把 collector 切换为落盘收集器。
+                // 必须在 init() 之后：init 会把 standalone 的 jobId(-1) 规范化为 0，
+                // 管理器 key 与下发给 collector 的 jobId 必须一致。
+                // 默认（未配置 dirtyRecord.enable=true）不会进入该分支，core.json 的默认
+                // StdoutPluginCollector 保持不变，历史行为完全一致。
+                if (DirtySinkContext.isEnabled(configuration)) {
+                    DirtySinkContext dirtySinkContext = DirtySinkContext.fromJob(configuration);
+                    DirtyRecordSinkManager.register(dirtySinkContext);
+                    dirtySinkManager = DirtyRecordSinkManager.getOrNull(dirtySinkContext.getJobId());
+                    configuration.set(CoreConstant.DATAX_CORE_STATISTICS_COLLECTOR_PLUGIN_TASKCLASS,
+                            FileSinkPluginCollector.class.getName());
+                }
+
                 LOG.info("jobContainer starts to do prepare ...");
                 this.prepare();
                 LOG.info("jobContainer starts to do split ...");
@@ -163,6 +182,17 @@ public class JobContainer extends AbstractContainer {
                     FrameworkErrorCode.RUNTIME_ERROR, e);
         } finally {
             if(!isDryRun) {
+
+                // 脏数据落盘关闭必须在 task 线程全部结束之后：此时 scheduler 已返回
+                // （正常或异常），所有 collector 不再写文件。失败路径同样关闭，
+                // 保证已落盘内容 finalize、manifest 与 _FAILED 标记完整。
+                if (dirtySinkManager != null) {
+                    try {
+                        dirtySinkManager.close(!hasException);
+                    } catch (Throwable sinkCloseError) {
+                        LOG.error("脏数据落盘关闭时出错", sinkCloseError);
+                    }
+                }
 
                 this.destroy();
                 this.endTimeStamp = System.currentTimeMillis();

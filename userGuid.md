@@ -175,6 +175,16 @@ DataX本身作为数据同步框架，将不同数据源的同步抽象为从源
     读写失败总数                    :                   0
     ```
 
+# 脏数据落盘与回放
+
+同步过程中因类型不匹配、长度超限、约束冲突等产生的脏数据，默认只打印到日志。
+DataX 支持把脏数据以结构化 JSONL 落盘，并在修复问题后只回放脏数据而不重跑整个 job：
+
+- 落盘配置（`job.setting.dirtyRecord`，默认关闭）、文件滚动、总量上限、按列脱敏等见
+  [脏数据落盘使用指南](dirty-record-sink.md)
+- 修复后通过 `bin/datax-replay.py` 回放、损坏定位、重复回放防护、再脏数据处理见
+  [脏数据回放使用指南](dirty-record-replay.md)
+
 # Contact us
 
 Google Groups: [DataX-user](https://github.com/alibaba/DataX)

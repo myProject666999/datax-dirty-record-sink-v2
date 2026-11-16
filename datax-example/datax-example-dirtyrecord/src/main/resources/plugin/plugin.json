@@ -1,0 +1,10 @@
+{
+    "name": "dirtydemoreader",
+    "class": "com.alibaba.datax.example.dirtyrecord.plugin.reader.DirtyDemoReader",
+    "description": {
+        "useScene": "only for dirty record sink e2e tests.",
+        "mechanism": "in-memory reader that can deliberately produce dirty records.",
+        "warn": "Never use it in real jobs."
+    },
+    "developer": "datax-dirtyrecord-test"
+}

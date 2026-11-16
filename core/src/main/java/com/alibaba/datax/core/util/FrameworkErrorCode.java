@@ -27,6 +27,13 @@ public enum FrameworkErrorCode implements ErrorCode {
     START_TASKGROUP_ERROR("Framework-17", "taskGroup启动失败,请联系DataX开发团队解决"),
     CALL_DATAX_SERVICE_FAILED("Framework-18", "请求 DataX Service 出错."),
     CALL_REMOTE_FAILED("Framework-19", "远程调用失败"),
+
+    DIRTY_RECORD_SINK_ERROR("Framework-20", "脏数据落盘过程出错，请检查落盘目录权限和磁盘空间 ."),
+    DIRTY_RECORD_SINK_CAP_EXCEEDED("Framework-21", "脏数据落盘总量超过配置的totalSizeCap，且overCapPolicy=FAIL_JOB，任务失败 ."),
+    DIRTY_RECORD_MASK_CONFIG_ERROR("Framework-22", "脏数据脱敏配置错误，请检查mask.rules中的列名/列索引与策略配置 ."),
+    REPLAY_FILE_CORRUPT("Framework-23", "脏数据回放时发现落盘文件损坏或被截断，请根据报错中的文件名、行号和字节偏移检查 ."),
+    REPLAY_DUPLICATE_SINK("Framework-24", "该脏数据落盘目录已经回放完成；如需重复回放请显式指定--force ."),
+    REPLAY_MANIFEST_ERROR("Framework-25", "脏数据回放时manifest校验失败（文件缺失或sha256不一致） ."),
     KILLED_EXIT_VALUE("Framework-143", "Job 收到了 Kill 命令.");
 
     private final String code;

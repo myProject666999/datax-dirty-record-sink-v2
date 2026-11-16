@@ -95,6 +95,29 @@ public class CoreConstant {
 
     public static final String DATAX_JOB_SETTING_ERRORLIMIT_PERCENT = "job.setting.errorLimit.percentage";
 
+    // 脏数据落盘配置 job.setting.dirtyRecord
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD = "job.setting.dirtyRecord";
+
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD_ENABLE = "job.setting.dirtyRecord.enable";
+
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD_PATH = "job.setting.dirtyRecord.path";
+
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD_SINK_NAME = "job.setting.dirtyRecord.sinkName";
+
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD_FILE_MAX_SIZE = "job.setting.dirtyRecord.fileMaxSize";
+
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD_TOTAL_SIZE_CAP = "job.setting.dirtyRecord.totalSizeCap";
+
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD_OVER_CAP_POLICY = "job.setting.dirtyRecord.overCapPolicy";
+
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD_FLUSH_EVERY_RECORD = "job.setting.dirtyRecord.flushEveryRecord";
+
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD_MASK = "job.setting.dirtyRecord.mask";
+
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD_MASK_RULES = "job.setting.dirtyRecord.mask.rules";
+
+    public static final String DATAX_JOB_SETTING_DIRTY_RECORD_MASK_UNKNOWN_COLUMN = "job.setting.dirtyRecord.mask.unknownColumn";
+
     public static final String DATAX_JOB_SETTING_DRYRUN = "job.setting.dryRun";
 
     public static final String DATAX_JOB_PREHANDLER_PLUGINTYPE = "job.preHandler.pluginType";

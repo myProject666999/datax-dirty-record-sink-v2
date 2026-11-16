@@ -1,0 +1,45 @@
+{
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "name": "dirtydemoreader",
+          "parameter": {
+            "totalRecords": 10,
+            "readerDirtyIndexes": [0, 1, 2],
+            "column": ["id", "secret"]
+          }
+        },
+        "writer": {
+          "name": "dirtydemowriter",
+          "parameter": {
+            "writerDirtyValues": [],
+            "column": ["id", "secret"]
+          }
+        }
+      }
+    ],
+    "setting": {
+      "speed": {
+        "channel": 1
+      },
+      "errorLimit": {
+        "record": 100
+      },
+      "dirtyRecord": {
+        "enable": true,
+        "path": "${SINK_ROOT}",
+        "sinkName": "${SINK_NAME}",
+        "fileMaxSize": "1MB",
+        "totalSizeCap": "10MB",
+        "mask": {
+          "unknownColumn": "ERROR",
+          "rules": [
+            {"columnName": "secret", "strategy": "sha256"},
+            {"columnIndex": 0, "strategy": "replace", "replacement": "###"}
+          ]
+        }
+      }
+    }
+  }
+}

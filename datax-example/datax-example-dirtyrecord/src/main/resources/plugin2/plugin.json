@@ -1,0 +1,10 @@
+{
+    "name": "dirtydemowriter",
+    "class": "com.alibaba.datax.example.dirtyrecord.plugin.writer.DirtyDemoWriter",
+    "description": {
+        "useScene": "only for dirty record sink and replay e2e tests.",
+        "mechanism": "in-memory writer that can deliberately reject records as dirty.",
+        "warn": "Never use it in real jobs."
+    },
+    "developer": "datax-dirtyrecord-test"
+}

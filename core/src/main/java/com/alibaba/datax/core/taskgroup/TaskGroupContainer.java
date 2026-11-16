@@ -14,6 +14,7 @@ import com.alibaba.datax.core.statistics.communication.Communication;
 import com.alibaba.datax.core.statistics.communication.CommunicationTool;
 import com.alibaba.datax.core.statistics.container.communicator.taskgroup.StandaloneTGContainerCommunicator;
 import com.alibaba.datax.core.statistics.plugin.task.AbstractTaskPluginCollector;
+import com.alibaba.datax.core.statistics.plugin.task.sink.TaskContextHolder;
 import com.alibaba.datax.core.taskgroup.runner.AbstractRunner;
 import com.alibaba.datax.core.taskgroup.runner.ReaderRunner;
 import com.alibaba.datax.core.taskgroup.runner.WriterRunner;
@@ -476,6 +477,7 @@ public class TaskGroupContainer extends AbstractContainer {
                             taskCollectorClass, AbstractTaskPluginCollector.class,
                             configuration, this.taskCommunication,
                             PluginType.READER);
+                    TaskContextHolder.bind(pluginCollector, taskGroupId, this.taskId, attemptCount);
 
                     RecordSender recordSender;
                     if (transformerInfoExecs != null && transformerInfoExecs.size() > 0) {
@@ -501,6 +503,7 @@ public class TaskGroupContainer extends AbstractContainer {
                             taskCollectorClass, AbstractTaskPluginCollector.class,
                             configuration, this.taskCommunication,
                             PluginType.WRITER);
+                    TaskContextHolder.bind(pluginCollector, taskGroupId, this.taskId, attemptCount);
                     ((WriterRunner) newRunner).setRecordReceiver(new BufferedRecordExchanger(
                             this.channel, pluginCollector));
                     /**
